@@ -13,9 +13,11 @@ abstract class AutoUpdateTool : Plugin<Project> {
 
         // Add a task that uses configuration from the extension object
         project.tasks.register(TASK_NAME, AutoUpdateTask::class.java) {
-            it.tag.set(extension.tag)
-            it.message.set(extension.message)
-            it.outputFile.set(extension.outputFile)
+            it.mcVersion.set(extension.mcVersion)
+            it.version.set(extension.version)
+            it.versionRecommended.set(extension.versionRecommended)
+            it.updateCheckerFile.set(extension.updateCheckerFile)
+            it.changelogOutputFile.set(extension.changelogOutputFile)
         }
     }
 }

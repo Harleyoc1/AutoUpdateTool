@@ -28,17 +28,22 @@ class AutoUpdateToolTest {
     fun `parameters are passed correctly from extension to task`() {
         val project = ProjectBuilder.builder().build()
         project.pluginManager.apply("com.harleyoconnor.autoupdatetool")
-        val aFile = File(project.projectDir, ".tmp")
+        val updateCheckerFile = File(project.projectDir, ".update_checker.tmp")
+        val changelogOutputFile = File(project.projectDir, ".changelog_output.tmp")
         (project.extensions.getByName("autoUpdateTool") as AutoUpdateToolExtension).apply {
-            tag.set("a-sample-tag")
-            message.set("just-a-message")
-            outputFile.set(aFile)
+            this.mcVersion.set("1.18.2")
+            this.version.set("1.0.1")
+            this.versionRecommended.set(false)
+            this.updateCheckerFile.set(updateCheckerFile)
+            this.changelogOutputFile.set(changelogOutputFile)
         }
 
         val task = project.tasks.getByName("autoUpdate") as AutoUpdateTask
 
-        assertEquals("a-sample-tag", task.tag.get())
-        assertEquals("just-a-message", task.message.get())
-        assertEquals(aFile, task.outputFile.get().asFile)
+        assertEquals("1.18.2", task.mcVersion.get())
+        assertEquals("1.0.1", task.version.get())
+        assertEquals(false, task.versionRecommended.get())
+        assertEquals(updateCheckerFile, task.updateCheckerFile.get().asFile)
+        assertEquals(changelogOutputFile, task.changelogOutputFile.get().asFile)
     }
 }
