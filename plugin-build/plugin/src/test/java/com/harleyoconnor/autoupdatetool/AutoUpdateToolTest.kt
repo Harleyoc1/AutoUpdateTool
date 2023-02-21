@@ -1,4 +1,4 @@
-package com.ncorti.kotlin.gradle.template.plugin
+package com.harleyoconnor.autoupdatetool
 
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert.assertEquals
@@ -6,36 +6,36 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import java.io.File
 
-class TemplatePluginTest {
+class AutoUpdateToolTest {
 
     @Test
     fun `plugin is applied correctly to the project`() {
         val project = ProjectBuilder.builder().build()
-        project.pluginManager.apply("com.ncorti.kotlin.gradle.template.plugin")
+        project.pluginManager.apply("com.harleyoconnor.autoupdatetool")
 
-        assert(project.tasks.getByName("templateExample") is TemplateExampleTask)
+        assert(project.tasks.getByName("autoUpdate") is AutoUpdateTask)
     }
 
     @Test
-    fun `extension templateExampleConfig is created correctly`() {
+    fun `extension autoUpdateTool is created correctly`() {
         val project = ProjectBuilder.builder().build()
-        project.pluginManager.apply("com.ncorti.kotlin.gradle.template.plugin")
+        project.pluginManager.apply("com.harleyoconnor.autoupdatetool")
 
-        assertNotNull(project.extensions.getByName("templateExampleConfig"))
+        assertNotNull(project.extensions.getByName("autoUpdateTool"))
     }
 
     @Test
     fun `parameters are passed correctly from extension to task`() {
         val project = ProjectBuilder.builder().build()
-        project.pluginManager.apply("com.ncorti.kotlin.gradle.template.plugin")
+        project.pluginManager.apply("com.harleyoconnor.autoupdatetool")
         val aFile = File(project.projectDir, ".tmp")
-        (project.extensions.getByName("templateExampleConfig") as TemplateExtension).apply {
+        (project.extensions.getByName("autoUpdateTool") as AutoUpdateToolExtension).apply {
             tag.set("a-sample-tag")
             message.set("just-a-message")
             outputFile.set(aFile)
         }
 
-        val task = project.tasks.getByName("templateExample") as TemplateExampleTask
+        val task = project.tasks.getByName("autoUpdate") as AutoUpdateTask
 
         assertEquals("a-sample-tag", task.tag.get())
         assertEquals("just-a-message", task.message.get())

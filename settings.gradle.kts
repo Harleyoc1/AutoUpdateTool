@@ -25,7 +25,7 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = "kotlin-gradle-plugin-template"
+rootProject.name = "Auto Update Tool"
 
 include(":example")
 includeBuild("plugin-build")
