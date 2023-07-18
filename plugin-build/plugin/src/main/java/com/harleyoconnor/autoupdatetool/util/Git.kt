@@ -16,7 +16,7 @@ fun getCommitsSince(version: String, workingDir: File): Stream<Commit> {
 }
 
 fun getCommit(hash: String, workingDir: File): Commit {
-    val commitData = executeGitCommand(listOf("git", "show", hash), workingDir).split("\n").toMutableList()
+    val commitData = executeGitCommand(listOf("show", hash), workingDir).split("\n").toMutableList()
     if (commitData[1].startsWith("Merge")) {
         commitData.removeAt(1)
     }
