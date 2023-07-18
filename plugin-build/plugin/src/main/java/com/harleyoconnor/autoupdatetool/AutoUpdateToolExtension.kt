@@ -49,4 +49,12 @@ abstract class AutoUpdateToolExtension @Inject constructor(project: Project) {
     val changelogOutputFile: RegularFileProperty = objects.fileProperty().convention(
         project.layout.buildDirectory.file(DEFAULT_CHANGELOG_OUTPUT_FILE)
     )
+
+    /**
+     * Specifies whether debug mode should be used. If `true`, debug output will be printed rather than actually
+     * interacting with Git and writing file data.
+     *
+     * Defaults to `false`.
+     */
+    val debugMode: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
 }

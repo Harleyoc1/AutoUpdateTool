@@ -6,6 +6,7 @@ import com.harleyoconnor.autoupdatetool.util.asJsonObject
 import com.harleyoconnor.autoupdatetool.util.commit
 import com.harleyoconnor.autoupdatetool.util.fromJson
 import com.harleyoconnor.autoupdatetool.util.getCommitsSince
+import com.harleyoconnor.autoupdatetool.util.getJsonAsString
 import com.harleyoconnor.autoupdatetool.util.getLastTag
 import com.harleyoconnor.autoupdatetool.util.getOrCreateJsonObject
 import com.harleyoconnor.autoupdatetool.util.push
@@ -56,15 +57,26 @@ abstract class AutoUpdateTask : DefaultTask() {
     @get:OutputFile
     abstract val changelogOutputFile: RegularFileProperty
 
+    @get:Input
+    @get:Option(
+        option = "debugMode",
+        description = "Specifies whehter debug mode should be enabled."
+    )
+    abstract val debugMode: Property<Boolean>
+
     @TaskAction
     fun apply() {
         val changelog = buildChangelog().joinToString("\n")
         if (updateCheckerFile.isPresent) {
             updateUpdateCheckerFile(changelog)
         }
-        writeTextToFile(changelog, changelogOutputFile.get().asFile)
-        tagNewVersion(version.get(), project.projectDir)
-        pushTags(project.projectDir)
+        if (debugMode.get()) {
+            logger.lifecycle("Changelog output: {}", changelog)
+        } else {
+            writeTextToFile(changelog, changelogOutputFile.get().asFile)
+            tagNewVersion(version.get(), project.projectDir)
+            pushTags(project.projectDir)
+        }
     }
 
     private fun buildChangelog(): List<String> {
@@ -104,6 +116,10 @@ abstract class AutoUpdateTask : DefaultTask() {
     }
 
     private fun writeToUpdateCheckerFile(json: JsonObject, updateCheckerFile: File) {
+        if (debugMode.get()) {
+            logger.lifecycle("Update checker Json output: {}", getJsonAsString(json))
+            return
+        }
         try {
             writeJsonToFile(json, updateCheckerFile)
         } catch (e: Exception) {
@@ -114,8 +130,14 @@ abstract class AutoUpdateTask : DefaultTask() {
     private fun commitAndPushChangesToUpdateCheckerFile() {
         val updateCheckerFile = this.updateCheckerFile.get().asFile
         val workingDir = updateCheckerFile.parentFile
-        addToGit(updateCheckerFile.toPath().relativeTo(workingDir.toPath()).toString(), workingDir)
-        commit("Update version info for ${project.displayName}", workingDir)
-        push(workingDir)
+        val relativePath = updateCheckerFile.toPath().relativeTo(workingDir.toPath()).toString()
+        if (debugMode.get()) {
+            logger.lifecycle("Git commands execute with working dir: {}", workingDir.absolutePath)
+            logger.lifecycle("Git add executes with relative path: {}", relativePath)
+        } else {
+            addToGit(relativePath, workingDir)
+            commit("Update version info for ${project.displayName}", workingDir)
+            push(workingDir)
+        }
     }
 }
