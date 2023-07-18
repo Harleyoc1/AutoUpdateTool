@@ -60,7 +60,7 @@ abstract class AutoUpdateTask : DefaultTask() {
     @get:Input
     @get:Option(
         option = "debugMode",
-        description = "Specifies whehter debug mode should be enabled."
+        description = "Specifies whether debug mode should be enabled."
     )
     abstract val debugMode: Property<Boolean>
 
@@ -99,6 +99,7 @@ abstract class AutoUpdateTask : DefaultTask() {
     private fun updateUpdateCheckerJson(json: JsonObject, changelog: String) {
         val mcVersion = mcVersion.get()
         val version = version.get()
+
         val changelogJson = json.getOrCreateJsonObject(
             mcVersion,
             "Update check Json invalid: \"$mcVersion\" property must be an object."
@@ -111,7 +112,7 @@ abstract class AutoUpdateTask : DefaultTask() {
             "Update check Json invalid: \"promos\" property must be an object."
         )
         // Update promos Json with new version
-        promosJson.addProperty("$mcVersion.get-latest", "$mcVersion-$version")
+        promosJson.addProperty("$mcVersion-latest", "$mcVersion-$version")
         if (versionRecommended.get()) {
             promosJson.addProperty("$mcVersion-recommended", "$mcVersion-$version")
         }
