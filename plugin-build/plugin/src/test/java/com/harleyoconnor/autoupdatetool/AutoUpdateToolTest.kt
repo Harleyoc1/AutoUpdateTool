@@ -36,6 +36,7 @@ class AutoUpdateToolTest {
             this.versionRecommended.set(false)
             this.updateCheckerFile.set(updateCheckerFile)
             this.changelogOutputFile.set(changelogOutputFile)
+            this.debugMode.set(true)
         }
 
         val task = project.tasks.getByName("autoUpdate") as AutoUpdateTask
@@ -45,5 +46,6 @@ class AutoUpdateToolTest {
         assertEquals(false, task.versionRecommended.get())
         assertEquals(updateCheckerFile, task.updateCheckerFile.get().asFile)
         assertEquals(changelogOutputFile, task.changelogOutputFile.get().asFile)
+        assertEquals(true, task.debugMode.get())
     }
 }

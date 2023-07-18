@@ -18,6 +18,7 @@ abstract class AutoUpdateTool : Plugin<Project> {
             it.versionRecommended.set(extension.versionRecommended)
             it.updateCheckerFile.set(extension.updateCheckerFile)
             it.changelogOutputFile.set(extension.changelogOutputFile)
+            it.debugMode.set(extension.debugMode)
         }
     }
 }
