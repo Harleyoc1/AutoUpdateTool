@@ -97,8 +97,10 @@ abstract class AutoUpdateTask : DefaultTask() {
     }
 
     private fun updateUpdateCheckerJson(json: JsonObject, changelog: String) {
+        val mcVersion = mcVersion.get()
+        val version = version.get()
         val changelogJson = json.getOrCreateJsonObject(
-            mcVersion.get(),
+            mcVersion,
             "Update check Json invalid: \"$mcVersion\" property must be an object."
         )
         // Update version changelog with pre-built changelog
@@ -109,7 +111,7 @@ abstract class AutoUpdateTask : DefaultTask() {
             "Update check Json invalid: \"promos\" property must be an object."
         )
         // Update promos Json with new version
-        promosJson.addProperty("$mcVersion-latest", "$mcVersion-$version")
+        promosJson.addProperty("$mcVersion.get-latest", "$mcVersion-$version")
         if (versionRecommended.get()) {
             promosJson.addProperty("$mcVersion-recommended", "$mcVersion-$version")
         }
