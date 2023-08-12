@@ -95,10 +95,11 @@ abstract class AutoUpdateTask : DefaultTask() {
     }
 
     private fun updateVersionInfo(versionInfo: ModVersionInfo, changelog: String) {
+        val modVersion = "${minecraftVersion.get()}-${version.get()}"
         if (versionRecommended.get()) {
-            versionInfo.addRecommendedVersion(minecraftVersion.get(), version.get(), changelog)
+            versionInfo.addRecommendedVersion(minecraftVersion.get(), modVersion, changelog)
         } else {
-            versionInfo.addLatestVersion(minecraftVersion.get(), version.get(), changelog)
+            versionInfo.addLatestVersion(minecraftVersion.get(), modVersion, changelog)
         }
     }
 
