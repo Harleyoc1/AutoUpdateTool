@@ -1,19 +1,14 @@
 package com.harleyoconnor.autoupdatetool
 
-import com.google.gson.JsonObject
+import com.harleyoconnor.autoupdatetool.util.ModVersionInfo
 import com.harleyoconnor.autoupdatetool.util.addToGit
-import com.harleyoconnor.autoupdatetool.util.asJsonObject
 import com.harleyoconnor.autoupdatetool.util.commit
-import com.harleyoconnor.autoupdatetool.util.fromJson
 import com.harleyoconnor.autoupdatetool.util.getCommitsSince
-import com.harleyoconnor.autoupdatetool.util.getJsonAsString
 import com.harleyoconnor.autoupdatetool.util.getLastTag
-import com.harleyoconnor.autoupdatetool.util.getOrCreateJsonObject
 import com.harleyoconnor.autoupdatetool.util.pull
 import com.harleyoconnor.autoupdatetool.util.push
 import com.harleyoconnor.autoupdatetool.util.pushTags
 import com.harleyoconnor.autoupdatetool.util.tagNewVersion
-import com.harleyoconnor.autoupdatetool.util.writeJsonToFile
 import com.harleyoconnor.autoupdatetool.util.writeTextToFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -34,8 +29,8 @@ abstract class AutoUpdateTask : DefaultTask() {
     }
 
     @get:Input
-    @get:Option(option = "mcVersion", description = "The current Minecraft version.")
-    abstract val mcVersion: Property<String>
+    @get:Option(option = "minecraftVersion", description = "The current Minecraft version.")
+    abstract val minecraftVersion: Property<String>
 
     @get:Input
     @get:Option(
@@ -93,43 +88,27 @@ abstract class AutoUpdateTask : DefaultTask() {
             // Pull from remote repo, in case local repo is out of date
             pull(updateCheckerFile.parentFile)
         }
-        val json = fromJson(updateCheckerFile.readText()).asJsonObject(
-            "Update checker Json invalid: root element must be an object."
-        )
-        updateUpdateCheckerJson(json, changelog)
-        writeToUpdateCheckerFile(json, updateCheckerFile)
+        val versionInfo = ModVersionInfo.fromJson(updateCheckerFile.readText())!!
+        updateVersionInfo(versionInfo, changelog)
+        writeVersionInfo(versionInfo, updateCheckerFile)
         commitAndPushChangesToUpdateCheckerFile()
     }
 
-    private fun updateUpdateCheckerJson(json: JsonObject, changelog: String) {
-        val mcVersion = mcVersion.get()
-        val version = version.get()
-
-        val changelogJson = json.getOrCreateJsonObject(
-            mcVersion,
-            "Update check Json invalid: \"mcVersion\" property must be an object."
-        )
-        // Update version changelog with pre-built changelog
-        changelogJson.addProperty("$mcVersion-$version", changelog)
-
-        val promosJson = json.getOrCreateJsonObject(
-            "promos",
-            "Update check Json invalid: \"promos\" property must be an object."
-        )
-        // Update promos Json with new version
-        promosJson.addProperty("$mcVersion-latest", "$mcVersion-$version")
+    private fun updateVersionInfo(versionInfo: ModVersionInfo, changelog: String) {
         if (versionRecommended.get()) {
-            promosJson.addProperty("$mcVersion-recommended", "$mcVersion-$version")
+            versionInfo.addRecommendedVersion(minecraftVersion.get(), version.get(), changelog)
+        } else {
+            versionInfo.addLatestVersion(minecraftVersion.get(), version.get(), changelog)
         }
     }
 
-    private fun writeToUpdateCheckerFile(json: JsonObject, updateCheckerFile: File) {
+    private fun writeVersionInfo(versionInfo: ModVersionInfo, updateCheckerFile: File) {
         if (debugMode.get()) {
-            logger.lifecycle("Update checker Json output: {}", getJsonAsString(json))
+            logger.lifecycle("Update checker Json output: {}", ModVersionInfo.toJson(versionInfo))
             return
         }
         try {
-            writeJsonToFile(json, updateCheckerFile)
+            ModVersionInfo.write(versionInfo, updateCheckerFile)
         } catch (e: Exception) {
             error("Error writing update checker file: " + e.message.toString())
         }

@@ -9,7 +9,8 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(gradleApi())
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.moshi:moshi:1.14.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
 
     testImplementation(libs.junit)
 }

@@ -16,7 +16,7 @@ abstract class AutoUpdateToolExtension @Inject constructor(project: Project) {
     /**
      * The current Minecraft version.
      */
-    val mcVersion: Property<String> = objects.property(String::class.java)
+    val minecraftVersion: Property<String> = objects.property(String::class.java)
 
     /**
      * The new mod version. This is the version that the project will be updated to.
