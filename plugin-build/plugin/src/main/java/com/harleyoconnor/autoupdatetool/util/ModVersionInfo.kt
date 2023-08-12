@@ -31,7 +31,7 @@ class ModVersionInfo(
         }
     }
 
-    class Adapter: JsonAdapter<ModVersionInfo>() {
+    class Adapter : JsonAdapter<ModVersionInfo>() {
 
         private val stringToStringMapAdapter: Lazy<JsonAdapter<Map<String, String>>> = lazy {
             MOSHI.adapter(Types.newParameterizedType(Map::class.java, String::class.java, String::class.java))
@@ -52,7 +52,8 @@ class ModVersionInfo(
                     "homepage" -> homepage = reader.nextString()
                     "promos" -> promos = stringToStringMapAdapter.value.fromJson(reader) ?: emptyMap()
                     else -> {
-                        changelogs[name] = stringToStringMapAdapter.value.fromJson(reader)?.toMutableMap() ?: mutableMapOf()
+                        changelogs[name] = stringToStringMapAdapter.value.fromJson(reader)?.toMutableMap()
+                            ?: mutableMapOf()
                     }
                 }
             }
@@ -92,7 +93,7 @@ class ModVersionInfo(
     }
 
     private fun addChangelog(minecraftVersion: String, modVersion: String, changelog: String) {
-        changelogs.computeIfAbsent(minecraftVersion) { HashMap() } [modVersion] = changelog
+        changelogs.computeIfAbsent(minecraftVersion) { HashMap() }[modVersion] = changelog
     }
 
     override fun equals(other: Any?): Boolean {
@@ -112,5 +113,4 @@ class ModVersionInfo(
         result = 31 * result + promos.hashCode()
         return result
     }
-
 }

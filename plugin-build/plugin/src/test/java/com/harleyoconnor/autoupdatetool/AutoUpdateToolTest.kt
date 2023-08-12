@@ -51,15 +51,15 @@ class AutoUpdateToolTest {
     }
 
     private val testVersionInfoJson = "{\n" +
-            "  \"homepage\": \"https://example.com/\",\n" +
-            "  \"1.20.1\": {\n" +
-            "    \"1.20.1-1.0.0\": \"Initial release\"\n" +
-            "  },\n" +
-            "  \"promos\": {\n" +
-            "    \"1.20.1-latest\": \"1.20.1-1.0.0\",\n" +
-            "    \"1.20.1-recommended\": \"1.20.1-1.0.0\"\n" +
-            "  }\n" +
-            "}"
+        "  \"homepage\": \"https://example.com/\",\n" +
+        "  \"1.20.1\": {\n" +
+        "    \"1.20.1-1.0.0\": \"Initial release\"\n" +
+        "  },\n" +
+        "  \"promos\": {\n" +
+        "    \"1.20.1-latest\": \"1.20.1-1.0.0\",\n" +
+        "    \"1.20.1-recommended\": \"1.20.1-1.0.0\"\n" +
+        "  }\n" +
+        "}"
 
     @Test
     fun `test parsing version info`() {
@@ -108,5 +108,4 @@ class AutoUpdateToolTest {
         assertEquals("1.19.4-1.0.0", versionInfo.promos["1.19.4-latest"])
         assertEquals("1.19.4-1.0.0", versionInfo.promos["1.19.4-recommended"])
     }
-
 }
