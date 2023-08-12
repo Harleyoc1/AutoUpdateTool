@@ -39,6 +39,10 @@ fun commit(message: String, workingDir: File) {
     executeGitCommand(listOf("commit", "-m", message), workingDir)
 }
 
+fun pull(workingDir: File) {
+    executeGitCommand(listOf("pull"), workingDir)
+}
+
 fun push(workingDir: File) {
     executeGitCommand(listOf("push"), workingDir)
 }

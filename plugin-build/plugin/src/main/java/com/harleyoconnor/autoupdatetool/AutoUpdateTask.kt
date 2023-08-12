@@ -9,6 +9,7 @@ import com.harleyoconnor.autoupdatetool.util.getCommitsSince
 import com.harleyoconnor.autoupdatetool.util.getJsonAsString
 import com.harleyoconnor.autoupdatetool.util.getLastTag
 import com.harleyoconnor.autoupdatetool.util.getOrCreateJsonObject
+import com.harleyoconnor.autoupdatetool.util.pull
 import com.harleyoconnor.autoupdatetool.util.push
 import com.harleyoconnor.autoupdatetool.util.pushTags
 import com.harleyoconnor.autoupdatetool.util.tagNewVersion
@@ -88,6 +89,10 @@ abstract class AutoUpdateTask : DefaultTask() {
 
     private fun updateUpdateCheckerFile(changelog: String) {
         val updateCheckerFile = this.updateCheckerFile.get().asFile
+        if (!this.debugMode.get()) {
+            // Pull from remote repo, in case local repo is out of date
+            pull(updateCheckerFile.parentFile)
+        }
         val json = fromJson(updateCheckerFile.readText()).asJsonObject(
             "Update checker Json invalid: root element must be an object."
         )
