@@ -107,7 +107,7 @@ abstract class AutoUpdateTask : DefaultTask() {
 
         val changelogJson = json.getOrCreateJsonObject(
             mcVersion,
-            "Update check Json invalid: \"$mcVersion\" property must be an object."
+            "Update check Json invalid: \"mcVersion\" property must be an object."
         )
         // Update version changelog with pre-built changelog
         changelogJson.addProperty("$mcVersion-$version", changelog)
