@@ -31,30 +31,6 @@ private fun getCommitAuthorName(authorData: String): String {
     return authorData.substring(authorData.indexOf(":") + 2, endIndex)
 }
 
-fun addToGit(path: String, workingDir: File) {
-    executeGitCommand(listOf("add", path), workingDir)
-}
-
-fun commit(message: String, workingDir: File) {
-    executeGitCommand(listOf("commit", "-m", message), workingDir)
-}
-
-fun pull(workingDir: File) {
-    executeGitCommand(listOf("pull"), workingDir)
-}
-
-fun push(workingDir: File) {
-    executeGitCommand(listOf("push"), workingDir)
-}
-
-fun tagNewVersion(version: String, workingDir: File) {
-    executeGitCommand(listOf("tag", version), workingDir)
-}
-
-fun pushTags(workingDir: File) {
-    executeGitCommand(listOf("push", "--tags"), workingDir)
-}
-
 /**
  * @return standard output from the process
  */

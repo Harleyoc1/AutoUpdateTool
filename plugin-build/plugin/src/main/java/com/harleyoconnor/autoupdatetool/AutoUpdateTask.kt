@@ -1,14 +1,8 @@
 package com.harleyoconnor.autoupdatetool
 
 import com.harleyoconnor.autoupdatetool.util.ModVersionInfo
-import com.harleyoconnor.autoupdatetool.util.addToGit
-import com.harleyoconnor.autoupdatetool.util.commit
 import com.harleyoconnor.autoupdatetool.util.getCommitsSince
 import com.harleyoconnor.autoupdatetool.util.getLastTag
-import com.harleyoconnor.autoupdatetool.util.pull
-import com.harleyoconnor.autoupdatetool.util.push
-import com.harleyoconnor.autoupdatetool.util.pushTags
-import com.harleyoconnor.autoupdatetool.util.tagNewVersion
 import com.harleyoconnor.autoupdatetool.util.writeTextToFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -20,7 +14,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import java.io.File
 import java.util.stream.Collectors
-import kotlin.io.path.relativeTo
 
 abstract class AutoUpdateTask : DefaultTask() {
 
@@ -70,8 +63,6 @@ abstract class AutoUpdateTask : DefaultTask() {
             logger.lifecycle("Changelog output: {}", changelog)
         } else {
             writeTextToFile(changelog, changelogOutputFile.get().asFile)
-            tagNewVersion(version.get(), project.projectDir)
-            pushTags(project.projectDir)
         }
     }
 
@@ -84,14 +75,9 @@ abstract class AutoUpdateTask : DefaultTask() {
 
     private fun updateUpdateCheckerFile(changelog: String) {
         val updateCheckerFile = this.updateCheckerFile.get().asFile
-        if (!this.debugMode.get()) {
-            // Pull from remote repo, in case local repo is out of date
-            pull(updateCheckerFile.parentFile)
-        }
         val versionInfo = ModVersionInfo.fromJson(updateCheckerFile.readText())!!
         updateVersionInfo(versionInfo, changelog)
         writeVersionInfo(versionInfo, updateCheckerFile)
-        commitAndPushChangesToUpdateCheckerFile()
     }
 
     private fun updateVersionInfo(versionInfo: ModVersionInfo, changelog: String) {
@@ -115,17 +101,4 @@ abstract class AutoUpdateTask : DefaultTask() {
         }
     }
 
-    private fun commitAndPushChangesToUpdateCheckerFile() {
-        val updateCheckerFile = this.updateCheckerFile.get().asFile
-        val workingDir = updateCheckerFile.parentFile
-        val relativePath = updateCheckerFile.toPath().relativeTo(workingDir.toPath()).toString()
-        if (debugMode.get()) {
-            logger.lifecycle("Git commands execute with working dir: {}", workingDir.absolutePath)
-            logger.lifecycle("Git add executes with relative path: {}", relativePath)
-        } else {
-            addToGit(relativePath, workingDir)
-            commit("Update version info for ${project.displayName}", workingDir)
-            push(workingDir)
-        }
-    }
 }
