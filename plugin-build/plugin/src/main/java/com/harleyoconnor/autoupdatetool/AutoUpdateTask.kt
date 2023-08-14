@@ -101,5 +101,4 @@ abstract class AutoUpdateTask : DefaultTask() {
             error("Error writing update checker file: " + e.message.toString())
         }
     }
-
 }
