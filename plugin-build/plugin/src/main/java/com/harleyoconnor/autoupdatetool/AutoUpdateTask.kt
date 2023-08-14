@@ -69,6 +69,7 @@ abstract class AutoUpdateTask : DefaultTask() {
     private fun buildChangelog(): List<String> {
         val lastVersion = getLastTag(project.projectDir)
         return getCommitsSince(lastVersion, project.projectDir)
+            .filter { !it.message.trim().startsWith("[exclc]") }
             .map { "- ${it.message} [${it.authorName}]" }
             .collect(Collectors.toList())
     }
