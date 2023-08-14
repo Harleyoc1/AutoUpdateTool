@@ -3,6 +3,13 @@ package com.harleyoconnor.autoupdatetool.util
 import java.io.File
 import java.util.stream.Stream
 
+fun getTagBeforeLast(workingDir: File): String {
+    return executeGitCommand(
+        listOf("describe", "--tags", "--abbrev=0", "--exclude=${getLastTag(workingDir)}"),
+        workingDir
+    ).trim()
+}
+
 fun getLastTag(workingDir: File): String {
     return executeGitCommand(listOf("describe", "--tags", "--abbrev=0"), workingDir).trim()
 }

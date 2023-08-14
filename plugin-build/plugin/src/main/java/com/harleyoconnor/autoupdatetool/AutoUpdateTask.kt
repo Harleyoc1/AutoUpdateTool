@@ -2,7 +2,7 @@ package com.harleyoconnor.autoupdatetool
 
 import com.harleyoconnor.autoupdatetool.util.ModVersionInfo
 import com.harleyoconnor.autoupdatetool.util.getCommitsSince
-import com.harleyoconnor.autoupdatetool.util.getLastTag
+import com.harleyoconnor.autoupdatetool.util.getTagBeforeLast
 import com.harleyoconnor.autoupdatetool.util.writeTextToFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -67,7 +67,7 @@ abstract class AutoUpdateTask : DefaultTask() {
     }
 
     private fun buildChangelog(): List<String> {
-        val lastVersion = getLastTag(project.projectDir)
+        val lastVersion = getTagBeforeLast(project.projectDir)
         return getCommitsSince(lastVersion, project.projectDir)
             .filter { !it.message.trim().startsWith("[exclc]") }
             .map { "- ${it.message} [${it.authorName}]" }
